@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Posts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+    <h1>Upload Post</h1>
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" required>
+    <br>
+    <label for="description">Description:</label><br>
+    <input type="text" id="description" name="description" required>
+    <br>
+    <label for="file">File:</label>
+    <input type="file" id="file" name="file" required>
+    <br>
+    <button type="submit">Upload</button>
+  </form>
+  <script>
+    function submitForm() {
+        // Get form data
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+
+        // Create FormData object to send to server
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('file', file);
+
+        // Simulate AJAX request to server (replace this with actual AJAX call)
+        // In a real scenario, you would send the form data to the server using fetch or XMLHttpRequest
+        // and handle the response accordingly.
+        // For simplicity, here's a simulated response:
+        const post = {
+            title: title,
+            description: description,
+            filename: 'your-fake-filename.jpg'  // Replace this with the actual filename returned from the server
+        };
+
+        // Update postList with the new post
+        updatePostList(post);
+    }
+
+    function updatePostList(post) {
+        // Get the postList container
+        const postList = document.getElementById('postList');
+
+        // Append the new post to the postList
+        postList.innerHTML += `
+            <div class="post">
+                <h3>${post.title}</h3>
+                <p>${post.description}</p>
+                <img src="/uploads/${post.filename}" alt="${post.title}">
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
