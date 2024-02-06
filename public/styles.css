@@ -79,7 +79,7 @@ form {
 
 label {
   display: block;
-  margin-bottom: 16px; /* Increased margin below the label */
+  /* margin-bottom: 16px; Increased margin below the label */
   color: #666;
 }
 
@@ -87,7 +87,7 @@ input,
 button {
   width: 100%;
   padding: 14px; /* Increased padding for better touch experience */
-  /* margin-bottom: 20px; */
+  margin-bottom: 20px;
   box-sizing: border-box;
 }
 
