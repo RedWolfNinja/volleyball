@@ -1,26 +1,61 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>File Upload Homepage</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <h1>File Upload Homepage</h1><br>
+  <nav>
+    <div class="navbar">
+      <h1>RPVVOLLEY</h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <!-- Add more navigation links as needed -->
+      </ul>
+    </div>
+  </nav>
 
-  <div id="postList">
-    <!-- Uploaded posts will be displayed here -->
-  </div>
+  <section id="homepageContent">
+    <main>
+      <section id="postListContainer">
+        <h2>Последние посты</h2>
+        <div id="postList" class="post-list"></div>
+      </section>
 
+      <section id="featured-content">
+        <h2>Популярные видео и материалы</h2>
+        <!-- Вставьте ваш контент здесь -->
+      </section>
+
+      <section id="categories">
+        <h2>Категории</h2>
+        <!-- Вставьте ссылки или описания категорий -->
+      </section>
+
+      <section id="latest-content">
+        <h2>Новинки</h2>
+        <!-- Вставьте ваш контент здесь -->
+      </section>
+
+    </main>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 RPVVOLLEY. Все права защищены.</p>
+  </footer>
   <script>
     // Fetch the list of uploaded posts from the server and display them
     fetch('/posts')
       .then(response => response.json())
       .then(posts => {
         const postList = document.getElementById('postList');
-        postList.innerHTML = '<h2>Uploaded Posts:</h2>';
+        postList.innerHTML = ''; // Clear existing content
         posts.forEach(post => {
           postList.innerHTML += `
             <div class="post">
@@ -34,4 +69,5 @@
       .catch(error => console.error('Error fetching posts:', error));
   </script>
 </body>
+
 </html>
