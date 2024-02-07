@@ -38,6 +38,36 @@ body {
 .navbar a:hover {
   background-color: #333; /* Adjust the background color on hover */
 }
+/* Добавляем стили для новых элементов */
+.navbar li.profile-btn {
+  position: relative; /* Необходимо для позиционирования выпадающего блока */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+/* Добавим стили для правильного отображения кнопок "Registration" и "Login" */
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #fff; /* Цвет текста по умолчанию белый */
+  background-color: #444; /* Цвет фона по умолчанию серый */
+  transition: background-color 0.3s, color 0.3s; /* Анимация при наведении */
+}
+
+.dropdown-content a:hover {
+  background-color: #fff; /* Цвет фона при наведении белый */
+  color: #444; /* Цвет текста при наведении серый */
+}
+
+.profile-btn:hover .dropdown-content {
+  display: block; /* Отображаем выпадающий блок при наведении на кнопку "Profile" */
+}
 
 
 header {
@@ -124,3 +154,80 @@ button:hover {
   border-radius: 6px;
   margin-top: 10px;
 }
+/* Добавляем стили для переключателя темы */
+.theme-switch {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  z-index: 1000;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #fff;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #444;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+#themeLabel {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Добавляем стили для темной темы */
+body.dark-theme {
+  background-color: #333;
+  color: #fff;
+}
+
+.navbar a,
+#homepageContent h2,
+.post-list {
+  background-color: #444;
+  color: #fff;
+}
+
+.post {
+  background-color: #555;
+}
+
+/* Остальные стили остаются без изменений */
