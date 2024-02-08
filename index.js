@@ -27,7 +27,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
   // Send a response to the client
   res.send('File uploaded successfully!');
-  res.redirect('public/index.html');
 });
 
 // Serve the homepage with the list of uploaded posts

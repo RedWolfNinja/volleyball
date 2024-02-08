@@ -1,0 +1,5 @@
+# Ignore everything in /public/uploads
+/public/uploads/*
+
+# Except the .gitignore file inside /public/uploads
+!/public/uploads/.gitignore
