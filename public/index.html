@@ -67,6 +67,59 @@
         });
       })
       .catch(error => console.error('Error fetching posts:', error));
+  
+    function submitForm() {
+      // Get form data
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
+  
+      // Create FormData object to send to server
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('file', file);
+  
+      // Use fetch to send the form data to the server
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json()) // Assuming the server returns JSON
+        .then(data => {
+          // Handle the response data
+          updatePostList(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  
+    function updatePostList(post) {
+      // Get the postList container
+      const postList = document.getElementById('postList');
+  
+      // Clear existing content
+      postList.innerHTML = '';
+  
+      // Fetch the updated list of posts from the server
+      fetch('/posts')
+        .then(response => response.json())
+        .then(posts => {
+          // Append each post to the postList
+          posts.forEach(post => {
+            postList.innerHTML += `
+              <div class="post">
+                <h3>${post.title}</h3>
+                <p>${post.description}</p>
+                <img src="/uploads/${post.filename}" alt="${post.title}">
+              </div>
+            `;
+          });
+        })
+        .catch(error => console.error('Error fetching posts:', error));
+    }
   </script>
   <script src="theme.js"></script>
 

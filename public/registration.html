@@ -1,0 +1,55 @@
+
+<!-- registration.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <nav>
+    <div class="navbar">
+      <!-- Добавляем переключатель темы -->
+      <div class="theme-switch">
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider round"></span>
+        </label>
+        <span id="themeLabel">Dark Mode</span>
+      </div>
+      <h1>RPVVOLLEY</h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li class="profile-btn">
+          <a href="#">Profile</a>
+          <div class="dropdown-content">
+            <a href="registration.html">Registration</a>
+            <a href="login.html">Login</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <form id="registrationForm" action="/register" method="post">
+    <h1>Registration</h1>
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required>
+    <br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">Register</button>
+  </form>
+  <script src="theme.js"></script>
+
+</body>
+
+</html>

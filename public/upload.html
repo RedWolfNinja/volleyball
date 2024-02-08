@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Posts</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  
+
   <nav>
     <div class="navbar">
+      <!-- Добавляем переключатель темы -->
+      <div class="theme-switch">
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider round"></span>
+        </label>
+        <span id="themeLabel">Dark Mode</span>
+      </div>
       <h1>RPVVOLLEY</h1>
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="upload.html">Upload</a></li>
-        <!-- Add more navigation links as needed -->
+        <li class="profile-btn">
+          <a href="#">Profile</a>
+          <div class="dropdown-content">
+            <a href="registration.html">Registration</a>
+            <a href="login.html">Login</a>
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
@@ -31,40 +47,45 @@
     <br>
     <button type="submit">Upload</button>
   </form>
+  <script src="theme.js"></script>
   <script>
     function submitForm() {
-        // Get form data
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const fileInput = document.getElementById('file');
-        const file = fileInput.files[0];
+      // Get form data
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
 
-        // Create FormData object to send to server
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('file', file);
+      // Create FormData object to send to server
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('file', file);
 
-        // Simulate AJAX request to server (replace this with actual AJAX call)
-        // In a real scenario, you would send the form data to the server using fetch or XMLHttpRequest
-        // and handle the response accordingly.
-        // For simplicity, here's a simulated response:
-        const post = {
-            title: title,
-            description: description,
-            filename: 'your-fake-filename.jpg'  // Replace this with the actual filename returned from the server
-        };
+      // Use fetch to send the form data to the server
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json()) // Assuming the server returns JSON
+        .then(data => {
+          // Handle the response data
+          updatePostList(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
 
-        // Update postList with the new post
-        updatePostList(post);
+      // Update postList with the new post
+      updatePostList(post);
     }
 
     function updatePostList(post) {
-        // Get the postList container
-        const postList = document.getElementById('postList');
+      // Get the postList container
+      const postList = document.getElementById('postList');
 
-        // Append the new post to the postList
-        postList.innerHTML += `
+      // Append the new post to the postList
+      postList.innerHTML += `
             <div class="post">
                 <h3>${post.title}</h3>
                 <p>${post.description}</p>
@@ -72,6 +93,7 @@
             </div>
         `;
     }
-</script>
+  </script>
 </body>
+
 </html>
