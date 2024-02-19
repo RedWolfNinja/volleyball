@@ -72,27 +72,20 @@ app.get('/posts', async (req, res) => {
 });
 
 
-//
-//
-// LOGIN AND REGISTRATION SECTION
-//
-//
-
+// Registration
 app.post('/register', async (req, res) => {
   try {
     // Check if email already exists
     const existingUser = await db.query('SELECT * FROM users WHERE email = ?', [req.body.email]);
 
-
     if (!existingUser.length) {
-      // Hash password and insert new user
-      const hashPassword = await bcrypt.hash(req.body.password, 10);
-      await db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [req.body.username, req.body.email, hashPassword]);
+      // Insert new user
+      await db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [req.body.username, req.body.email, req.body.password]);
 
       console.log('User registered:', req.body.email);
       res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./registration.html'>Register another user</a></div>");
     } else {
-        res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./registration.html'>Register again</a></div>");
+      res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./registration.html'>Register again</a></div>");
     }
   } catch (error) {
     console.error('Error during registration:', error);
@@ -100,41 +93,34 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Login
 app.post('/login', async (req, res) => {
-  try{
-    const [foundUser] = await db.query('SELECT * FROM users WHERE email = ?', [req.body.email]);
-    console.log('Found User:', foundUser);
+  try {
+    const result = await db.query('SELECT * FROM users WHERE email = ?', [req.body.email]);
+    const foundUser = result[0];
+    
+    console.log('Result from database:', result); // Add this line for debugging
 
-      if (foundUser) {
-          const storedPass = foundUser[0].password;
-          const passwordMatch = await bcrypt.compare(req.body.password, storedPass);
+    if (result.length > 0) {
+      const foundUser = result[0];
+      const storedPass = foundUser.password;
+      const passwordMatch = req.body.password === storedPass;
 
-
-          if (passwordMatch) {
-              const usrname = foundUser[0].username;
-              res.send(`<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${usrname}</h3></div><br><br><div align='center'><a href='./login.html'>logout</a></div>`);
-          } else {
-              res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./login.html'>login again</a></div>");
-          }
+      if (passwordMatch) {
+        const usrname = foundUser.username;
+        res.send(`<div align ='center'><h2>Login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${usrname}</h3></div><br><br><div align='center'><a href='./login.html'>Logout</a></div>`);
+      } else {
+        res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./login.html'>Login again</a></div>");
       }
-      else {
-  
-          let fakePass = `$2b$$10$ifgfgfgfgfgfgfggfgfgfggggfgfgfga`;
-          await bcrypt.compare(req.body.password, fakePass);
-  
-          res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align='center'><a href='./login.html'>login again<a><div>");
-      }
-  } catch{
-      res.send("Internal server error");
-      res.status(500).send(`Internal Server Error: ${error.message}`);
+    } else {
+      res.send("<div align ='center'><h2>User not found</h2></div><br><br><div align='center'><a href='./login.html'>Login again</a><div>");
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
-//
-//
-//LOGIN AND REGISTRATION SECTION END
-//
-//
 
 process.on('exit', () => {
   db.end();
