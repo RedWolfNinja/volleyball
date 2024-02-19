@@ -1,32 +1,22 @@
 const express = require('express');
-const http = require('http');
-const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs/promises');
 const bodyParser = require('body-parser');
-const users = require('./data').userDB;
-const mysql = require('mysql');
+const { isUsernameTaken, insertUser, authenticateUser } = require('./database');
+
+const session = require('express-session');
+
 
 const app = express();
 const port = 3000;
 
+app.use(session({
+    secret : 'provolley',
+    resave : true,
+    saveUninitialized : true
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'provolleyAdmin1_',
-  database: 'userDatabase',
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-  } else {
-    console.log('Connected to MySQL database');
-  }
-});
-
+}));
 
 
 // Set up Multer for file uploads
@@ -47,13 +37,50 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
+// Handle form submissions for registration
+app.post('/register', async (req, res) => {
+  const { username, password, role } = req.body;
+
+  try {
+    const isTaken = await isUsernameTaken(username);
+
+    if (isTaken) {
+      return res.send('Username already exists. Please choose a different username.');
+    }
+
+    await insertUser(username, password, role);
+
+    res.send('Registration successful! Now you can log in.');
+  } catch (error) {
+    console.error('Error during registration:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Handle form submissions for login
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const isAuthenticated = await authenticateUser(username, password);
+
+    if (isAuthenticated) {
+      res.send('User access granted!');
+    } else {
+      res.send('Invalid credentials. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // Handle form submissions
 app.post('/upload', upload.single('file'), (req, res) => {
   // Handle the file upload as needed
 
   // Send a response to the client
   res.send('File uploaded successfully!');
-
 });
 
 // Serve the homepage with the list of uploaded posts
