@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs/promises');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const mysql = require('mysql');
 const session = require('express-session');
 const util = require('util');
 
@@ -49,6 +50,24 @@ function createUsersTable() {
 
 // Check and create the 'users' table on application start
 createUsersTable();
+// Function to create the 'users' table if it doesn't exist
+function createUsersTable() {
+  pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      username VARCHAR(255) NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      role VARCHAR(255) DEFAULT NULL
+    )
+  `, (err) => {
+    if (err) {
+      console.error('Error creating users table:', err);
+    }
+  });
+}
+
+// Check and create the 'users' table on application start
+createUsersTable();
 
 // Set up Multer for file uploads
 const storage = multer.diskStorage({
@@ -73,11 +92,22 @@ app.post('/register', async (req, res) => {
   try {
     // Check if email already exists
     const existingUser = await pool.query('SELECT * FROM users WHERE email = ?', [req.body.email]);
+  try {
+    // Check if email already exists
+    const existingUser = await pool.query('SELECT * FROM users WHERE email = ?', [req.body.email]);
 
     if (!existingUser.length) {
       // Insert new user
       await pool.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [req.body.username, req.body.email, req.body.password]);
+    if (!existingUser.length) {
+      // Insert new user
+      await pool.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [req.body.username, req.body.email, req.body.password]);
 
+      console.log('User registered:', req.body.email);
+      res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./registration.html'>Register another user</a></div>");
+    } else {
+      res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./registration.html'>Register again</a></div>");
+    }
       console.log('User registered:', req.body.email);
       res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./registration.html'>Register another user</a></div>");
     } else {
@@ -89,6 +119,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Login
 // Login
 app.post('/login', async (req, res) => {
   try {
@@ -113,12 +144,14 @@ app.post('/login', async (req, res) => {
       }
     } else {
       res.send("<div align ='center'><h2>User not found</h2></div><br><br><div align='center'><a href='./login.html'>Login again</a><div>");
+      res.send("<div align ='center'><h2>User not found</h2></div><br><br><div align='center'><a href='./login.html'>Login again</a><div>");
     }
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 
 // Handle form submissions
@@ -143,6 +176,17 @@ app.get('/posts', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
+process.on('exit', () => {
+  db.end();
+});
+
+process.on('SIGINT', () => {
+  db.end();
+  process.exit();
+});
+
 
 
 process.on('exit', () => {
