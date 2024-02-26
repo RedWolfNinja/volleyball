@@ -1,0 +1,129 @@
+<!-- post.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Post Page</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <nav>
+    <div class="navbar">
+      <!-- Добавляем переключатель темы -->
+      <div class="theme-switch">
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider round"></span>
+        </label>
+        <span id="themeLabel">Dark Mode</span>
+      </div>
+
+      <h1 id="mainTitle">RPVVOLLEY</h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li class="profile-btn">
+          <a href="#">Profile</a>
+          <div class="dropdown-content">
+            <a href="registration.html">Registration</a>
+            <a href="login.html">Login</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <section id="homepageContent">
+    <main>
+      <section id="postListContainer">
+        <h2>Последние посты</h2>
+        <div id="postList" class="post-list"></div>
+      </section>
+    </main>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 RPVVOLLEY. Все права защищены.</p>
+  </footer>
+
+  <script>
+    // Fetch the list of uploaded posts from the server and display them
+    fetch('/posts')
+      .then(response => response.json())
+      .then(posts => {
+        const postList = document.getElementById('postList');
+        postList.innerHTML = ''; // Clear existing content
+        posts.forEach(post => {
+          postList.innerHTML += `
+            <div class="post">
+              <h3>${post.title}</h3>
+              <p>${post.description}</p>
+              <img src="/uploads/${post.filename}" alt="${post.title}">
+            </div>
+          `;
+        });
+      })
+      .catch(error => console.error('Error fetching posts:', error));
+
+    function submitForm() {
+      // Get form data
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
+
+      // Create FormData object to send to server
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('file', file);
+
+      // Use fetch to send the form data to the server
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json()) // Assuming the server returns JSON
+        .then(data => {
+          // Handle the response data
+          updatePostList(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    function updatePostList(post) {
+      // Get the postList container
+      const postList = document.getElementById('postList');
+
+      // Clear existing content
+      postList.innerHTML = '';
+
+      // Fetch the updated list of posts from the server
+      fetch('/posts')
+        .then(response => response.json())
+        .then(posts => {
+          // Append each post to the postList
+          posts.forEach(post => {
+            postList.innerHTML += `
+              <div class="post">
+                <h3>${post.title}</h3>
+                <p>${post.description}</p>
+                <img src="/uploads/${post.filename}" alt="${post.title}">
+              </div>
+            `;
+          });
+        })
+        .catch(error => console.error('Error fetching posts:', error));
+    }
+  </script>
+  <script src="theme.js"></script>
+
+</body>
+
+</html>
+
