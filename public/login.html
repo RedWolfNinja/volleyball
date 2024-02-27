@@ -34,7 +34,12 @@
       </ul>
     </div>
   </nav>
-  <form id="loginForm" action="/login" method="post">
+  <div class="user-profile">
+    <img src="path/to/user/profile/logo.png" alt="User Logo">
+    <h2>${username}</h2>
+  </div>
+  <div id="login-status" style="display: none;"></div>
+<form id="loginForm" action="/login" method="post">
     <h1>Login</h1>
     <label for="username">Username:</label><br>
     <input type="text" placeholder="Username" id="username" name="username" required>
@@ -47,6 +52,7 @@
     <br>
     <button type="submit">Login</button>
   </form>
+  <button id="logoutButton" style="display: none;">Logout</button>
   <script src="theme.js"></script>
 </body>
 
