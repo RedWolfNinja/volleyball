@@ -1,0 +1,14 @@
+<!-- views/posts.ejs -->
+<html>
+<head>
+  <title>Posts</title>
+</head>
+<body>
+  <h1>Posts</h1>
+  <% posts.forEach(post => { %>
+    <div>
+      <a href="/posts/<%= post.postId %>">Post <%= post.postId %></a>
+    </div>
+  <% }); %>
+</body>
+</html>

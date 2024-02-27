@@ -1,0 +1,76 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Homepage</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <nav>
+    <div class="navbar">
+      <!-- Добавляем переключатель темы -->
+      <div class="theme-switch">
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider round"></span>
+        </label>
+        <span id="themeLabel">Dark Mode</span>
+      </div>
+
+      <h1 id="mainTitle">RPVVOLLEY</h1>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li class="profile-btn">
+          <a href="#">Profile</a>
+          <div class="dropdown-content">
+            <a href="registration.html">Registration</a>
+            <a href="login.html">Login</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <section id="mediaDetails">
+    <div class="container">
+      <h1>Media Details</h1>
+      <div class="media-info">
+        <img src="" alt="Media File" id="mediaImage">
+        <h2 id="mediaName">Media File Name</h2>
+        <p id="mediaDescription">Media File Description</p>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <p>&copy; 2024 RPVVOLLEY. Все права защищены.</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get the postId from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const postId = urlParams.get('postId'); // Assuming you have the postId in the URL
+
+      // Fetch post details from the server
+      fetch(`/posts/${postId}`)
+        .then(response => response.json())
+        .then(postInfo => {
+          // Update the DOM with post details
+          document.getElementById('mediaImage').src = postInfo.media;
+          document.getElementById('mediaName').textContent = postInfo.title;
+          document.getElementById('mediaDescription').textContent = postInfo.description;
+        })
+        .catch(error => {
+          console.error('Error fetching post details:', error);
+        });
+    });
+  </script>
+  <script src="theme.js"></script>
+
+</body>
+
+</html>

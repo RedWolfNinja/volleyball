@@ -49,50 +49,43 @@
   </form>
   <script src="theme.js"></script>
   <script>
-    function submitForm() {
-      // Get form data
-      const title = document.getElementById('title').value;
-      const description = document.getElementById('description').value;
-      const fileInput = document.getElementById('file');
-      const file = fileInput.files[0];
+function submitForm() {
+  const form = document.getElementById('uploadForm');
+  const formData = new FormData(form);
 
-      // Create FormData object to send to server
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('description', description);
-      formData.append('file', file);
+  // Generate a unique ID using the generatePostId function
+  const postId = generatePostId();
 
-      // Use fetch to send the form data to the server
-      fetch('/upload', {
-        method: 'POST',
-        body: formData
-      })
-        .then(response => response.json()) // Assuming the server returns JSON
-        .then(data => {
-          // Handle the response data
-          updatePostList(data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+  // Append the postId to the formData
+  formData.append('postId', postId);
 
-      // Update postList with the new post
-      updatePostList(post);
-    }
+  fetch('/upload', {
+    method: 'POST',
+    body: formData,
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response data
+      updatePostList(data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
 
-    function updatePostList(post) {
-      // Get the postList container
-      const postList = document.getElementById('postList');
+function updatePostList(post) {
+  // Get the postList container
+  const postList = document.getElementById('postList');
 
-      // Append the new post to the postList
-      postList.innerHTML += `
-            <div class="post">
-                <h3>${post.title}</h3>
-                <p>${post.description}</p>
-                <img src="/uploads/${post.filename}" alt="${post.title}">
-            </div>
-        `;
-    }
+  // Append the new post to the postList
+  postList.innerHTML += `
+    <div class="post" id="${post.postId}">
+      <h3>${post.title}</h3>
+      <p>${post.description}</p>
+      <img src="/uploads/${post.filename}" alt="${post.title}">
+    </div>
+  `;
+}
   </script>
 </body>
 
