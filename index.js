@@ -158,3 +158,76 @@ process.on('SIGINT', () => {
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+// Serve the login page
+app.get('/login', (req, res) => {
+  // Проверяем, залогинен ли пользователь
+  if (req.session && req.session.user) {
+    // Если залогинен, отправляем страницу с информацией о входе и кнопкой для выхода
+    res.sendFile(path.join(__dirname, 'login-success.html'));
+  } else {
+    // Если не залогинен, отправляем обычную страницу входа
+    res.sendFile(path.join(__dirname, 'login.html'));
+  }
+});
+
+// Handle form submissions for login
+app.post('/login', async (req, res) => {
+  try {
+    const result = await poolQuery('SELECT * FROM users WHERE email = ?', [req.body.email]);
+
+    if (result.length > 0) {
+      const foundUser = result[0];
+      const storedPass = foundUser.password;
+      const passwordMatch = req.body.password === storedPass;
+
+      if (passwordMatch) {
+        // Сохраняем информацию о входе в сессии
+        req.session.user = {
+          email: foundUser.email,
+          username: foundUser.username,
+          // Другие данные, которые вы хотите сохранить
+        };
+
+        // Отправляем информацию о входе и кнопку для выхода
+        res.sendFile(path.join(__dirname, 'login-success.html'));
+      } else {
+        res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./login.html'>Login again</a></div>");
+      }
+    } else {
+      res.send("<div align ='center'><h2>User not found</h2></div><br><br><div align='center'><a href='./login.html'>Login again</a><div>");
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Logout endpoint
+app.get('/logout', (req, res) => {
+  // Удаляем информацию о пользователе из сессии
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      // После выхода перенаправляем на страницу входа
+      res.redirect('/login');
+    }
+  });
+});
+// Middleware для проверки авторизации
+const isAuthenticated = (req, res, next) => {
+  if (req.session.user) {
+    // Если пользователь вошел, передаем управление следующему обработчику
+    next();
+  } else {
+    // Если пользователь не вошел, перенаправляем его на страницу входа
+    res.redirect('/login');
+  }
+};
+
+// Используйте isAuthenticated в тех роутах, где нужна авторизация
+app.get('/profile', isAuthenticated, (req, res) => {
+  // Отправляем страницу профиля
+  res.sendFile(path.join(__dirname, 'profile.html'));
+});
